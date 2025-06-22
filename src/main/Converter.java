@@ -7,14 +7,22 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import io.github.cdimascio.dotenv.Dotenv; // ✅ importar dotenv
+
 
 public class Converter {
 
     String url = "https://v6.exchangerate-api.com/v6/";
-    String key = "2d26dba6f5cc5845a24e0c63";
+    private final String key;
 
-    public Converter(){}
+    public Converter() {
+        Dotenv dotenv = Dotenv.load(); // Carga las variables del archivo .env
+        key = dotenv.get("EXCHANGE_API_KEY");
 
+        if (key == null) {
+            throw new RuntimeException("❌ La variable EXCHANGE_API_KEY no está definida en el archivo .env");
+        }
+    }
     public double convert(double amount, String baseCurrency, String targetCurrency) throws IOException, InterruptedException {
 
         String url2 = "GET https://v6.exchangerate-api.com/v6/YOUR-API-KEY/pair/EUR/GBP/AMOUNT\n";
